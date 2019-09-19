@@ -19,9 +19,9 @@ def from_mne(mne_epoch):
 def from_EasyEEG():
     # convert from EasyEEG to TTT
 
-    ttt_epoch = Epoch()
+    ttt_epoch = Epoch.Epoch()
     return (ttt_epoch)
 
 def from_nparray(data, times, ch_names = None, sfreq = None, events_list = None, events_dict = None):
-    ttt_epoch = Epoch(data, times, ch_names, sfreq, events_list, events_dict)
+    ttt_epoch = Epoch.Epoch(data, times, ch_names, sfreq, events_list, events_dict)
     return (ttt_epoch)

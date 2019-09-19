@@ -80,7 +80,7 @@ class Epoch:
         self.__avg_data = np.mean(self.__data,0) # (n_sensors, n_times)
         #TODO: differentiate between conditions
         self.__baseline_dur = - int(self.__times[0])
-        print(self.__baseline_dur)
+        # print(self.__baseline_dur)
         self.__gfp = _gfp(self.__avg_data)
         self.__num_trials = data.shape[0]
 
@@ -278,7 +278,7 @@ class Epoch:
         '''
         self._cal_grad() # calculate grad
         # specify peak-finding strength according to the sample rates, for 1000Hz, strength = 12, for 250Hz, strength = 3
-        strength = int (len(self.__times) / (self.__times[-1] - self.__times[0] )  * 12)
+        strength = int (len(self.__times) / (self.__times[-1] - self.__times[0] )  * 6)
         # if(self.__haspeak):
         self.__onset, self.__offset = self._find_onset_offset(strength, alpha, beta)
         # else:
@@ -396,7 +396,7 @@ class Epoch:
 
 
     def to_AlignedEpoch(self):
-        print(self.__data.shape) # (n_trials, n_sensors, n_times)
+        # print(self.__data.shape) # (n_trials, n_sensors, n_times)
         template = self.__avg_data[:, self.__peak + self.__baseline_dur] 
         
         projected_curves = []
