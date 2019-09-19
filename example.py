@@ -1,7 +1,8 @@
 import numpy as np
 import mne
-from TTT-EEG import Epoch
-import EasyEEG
+from TTT_EEG import Epoch
+from TTT_EEG.io import load
+# import EasyEEG
 
 
 ''' Load data from mne or easyeeg
@@ -21,9 +22,9 @@ ttt_epoch = load.from_mne(mne_epoch)
            pre-determined pois(`poi_left` and `poi_right`).
 '''
 
-left_poi, right_poi = ttt_epoch.narrow_down_poi(interactive = True)
-# poi_left, poi_right = 150, 230
-# ttt_epoch.narrow_down_poi(interactive = False, poi_left = poi_left, poi_right = poi_right)
+# poi_right, poi_left = ttt_epoch.narrow_down_poi(interactive = True)
+poi_left, poi_right = 150, 230
+ttt_epoch.narrow_down_poi(interactive = False, poi_left = poi_left, poi_right = poi_right)
 
 
 ''' Find epoch indices and plot result

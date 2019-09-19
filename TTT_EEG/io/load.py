@@ -1,4 +1,3 @@
-print(__name__)
 # @author: Xuefei Wang
 from .. import Epoch
 

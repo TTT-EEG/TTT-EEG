@@ -167,7 +167,7 @@ class Epoch:
             textstr = "None - None"
             texts = ax_text.text(0.5, 0.5, textstr, fontsize=14, verticalalignment='top', bbox=props)
 
-            gui = interactive_ax(ax,ax_text, shades, texts, min_val, max_val, min_time, max_time)
+            gui = Interactive_ax(ax,ax_text, shades, texts, min_val, max_val, min_time, max_time)
 
             slider_poi_left.on_changed(gui.update_left)
             slider_poi_right.on_changed(gui.update_right)

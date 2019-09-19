@@ -59,8 +59,8 @@ class AlignedEpoch:
         #TODO: plot topo
         return fig, ax
    
-    def find_alignment_SNR_boost(self,):
-        snr_boost = np.max(np.std(np.nanmean(self.__data,0), 0)[self.__all_onset:self.__all_offset]) / np.max(np.std(np.nanmean(self.__aligned,0), 0))
+    def find_SNR_boost(self,):
+        snr_boost = np.max(np.std(np.nanmean(self.__aligned,0), 0)) / np.max(np.std(np.nanmean(self.__data,0), 0)[self.__all_onset:self.__all_offset]) 
         return snr_boost
 
 
