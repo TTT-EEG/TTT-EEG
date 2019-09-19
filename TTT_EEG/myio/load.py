@@ -1,3 +1,4 @@
+print(__name__)
 # @author: Xuefei Wang
 from .. import Epoch
 
@@ -20,4 +21,8 @@ def from_EasyEEG():
     # convert from EasyEEG to TTT
 
     ttt_epoch = Epoch()
+    return (ttt_epoch)
+
+def from_nparray(data, times, ch_names = None, sfreq = None, events_list = None, events_dict = None):
+    ttt_epoch = Epoch(data, times, ch_names, sfreq, events_list, events_dict)
     return (ttt_epoch)

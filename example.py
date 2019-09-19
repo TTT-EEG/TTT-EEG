@@ -40,7 +40,7 @@ print("Let's make a summary: \n"
         "peak: \t%d ms\b\n"
         "onset, offset: \t%d, %d ms\n"
         "duration: \t%d ms\b\n"
-        "rise speed, fall speed: \t%.3f, %.3f uV/ms\n"
+        "rise speed, fall speed: \t%.3f, %.3f uV/s\n" # TODO: change this from ms to s
         %(poi_left, poi_right, peak, onset, offset, duration, rise_speed, fall_speed))
 
 ## make a visual summary

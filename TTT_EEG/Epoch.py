@@ -8,8 +8,8 @@ from matplotlib import patches
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.widgets import Slider, Button
 
-from AlignedEpoch import AlignedEpoch
-from utils.Interactive_ax import Interactive_ax
+from .AlignedEpoch import AlignedEpoch
+from .utils.Interactive_ax import Interactive_ax
 
 
 def _gfp(data):
