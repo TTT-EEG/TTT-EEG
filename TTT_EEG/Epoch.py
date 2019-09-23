@@ -146,7 +146,9 @@ class Epoch:
             fig.set_size_inches(12,6)
             ax = fig.add_axes([0.1, 0.3, 0.8, 0.65])
             
-            ax.plot(self.__times, self.__avg_data.T)
+            ax.plot(self.__times, self.__avg_data.T,'k')
+            axx = ax.twinx()
+            axx.plot(self.__times, self.__gfp, linewidth=10, alpha=0.4,color='r')
             ax.set_xticks(self.__times[::100])
             ax.grid()
 
@@ -202,7 +204,7 @@ class Epoch:
         '''
         # plt.plot(self.__gfp)
         # plt.show()
-        index = argrelmax(self.__gfp[self.__left_poi: self.__right_poi], order = order)[0] + self.__left_poi
+        index = argrelmax(self.__gfp[self.__left_poi + self.__baseline_dur: self.__right_poi + self.__baseline_dur], order = order)[0] + self.__left_poi + self.__baseline_dur
         pairs = [[ind, self.__gfp[ind]] for ind in index]
         pairs = np.array(pairs)
         # for i in range(pairs.shape[0]):
