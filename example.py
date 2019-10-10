@@ -11,7 +11,7 @@ from TTT_EEG.io import load
 file_path = './example-data-epo.fif'
 mne_epoch = mne.read_epochs(file_path, verbose = False)
 ttt_epoch = load.from_mne(mne_epoch)
-# EasyEEG_epoch = EasyEEG.io.load
+# EasyEEG_epoch = EasyEEG.io.load(file_path)
 # ttt_epoch = io.from_EasyEEG(file_path)
 
 
@@ -45,17 +45,17 @@ print("Let's make a summary: \n"
         %(poi_left, poi_right, peak, onset, offset, duration, rise_speed, fall_speed))
 
 ## make a visual summary
-fig, ax = ttt_epoch.visualize_evolution()
-
+# fig, ax = ttt_epoch.visualize_evolution()
 
 ''' Align single trials and plot result
 '''
 
 ttt_aligned_epoch = ttt_epoch.to_AlignedEpoch()
 
-ttt_aligned_epoch.plot_latency_distribution()
-ttt_aligned_epoch.plot_alignment_waveform()
+# ttt_aligned_epoch.plot_latency_distribution()
+# ttt_aligned_epoch.plot_alignment_waveform()
 ttt_aligned_epoch.plot_aligned_topo()
+plt.show() # TODO: fix this
 
 SNR_boost = ttt_aligned_epoch.find_SNR_boost()
 print('SNR boost after alignment: %.3f'%(SNR_boost))

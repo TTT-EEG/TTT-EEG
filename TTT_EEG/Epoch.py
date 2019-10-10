@@ -180,11 +180,13 @@ class Epoch:
 
             plt.show()
             
-            self.__left_poi, self.__right_poi = gui.return_poi()
+            poi_left, poi_right= gui.return_poi()
+            self.__left_poi, self.__right_poi = poi_left + self.__baseline_dur, poi_right + self.__baseline_dur 
 
         else:
-            self.__left_poi, self.__right_poi = poi_left, poi_right
-        return self.__left_poi, self.__right_poi
+            self.__left_poi, self.__right_poi = poi_left + self.__baseline_dur, poi_right + self.__baseline_dur
+        
+        return self.__left_poi - self.__baseline_dur, self.__right_poi - self.__baseline_dur
 
 
     def find_peak(self, order = 5):
@@ -204,7 +206,7 @@ class Epoch:
         '''
         # plt.plot(self.__gfp)
         # plt.show()
-        index = argrelmax(self.__gfp[self.__left_poi + self.__baseline_dur: self.__right_poi + self.__baseline_dur], order = order)[0] + self.__left_poi + self.__baseline_dur
+        index = argrelmax(self.__gfp[self.__left_poi: self.__right_poi], order = order)[0] + self.__left_poi
         pairs = [[ind, self.__gfp[ind]] for ind in index]
         pairs = np.array(pairs)
         # for i in range(pairs.shape[0]):
@@ -217,7 +219,7 @@ class Epoch:
 
         self.__peak = int(pair[0][0])
         
-        return self.__peak
+        return self.__peak - self.__baseline_dur
 
     def _cal_grad(self):
         '''calculate the Gradient Magnitude Matrix'''
@@ -285,7 +287,7 @@ class Epoch:
         self.__onset, self.__offset = self._find_onset_offset(strength, alpha, beta)
         # else:
             # self.__onset, self.__offset = self._findOnsetOffset_nopeak(strength,alpha, beta)
-        return self.__onset, self.__offset
+        return self.__onset - self.__baseline_dur, self.__offset - self.__baseline_dur
 
 
     def find_duration(self):
@@ -366,15 +368,15 @@ class Epoch:
         
         ax1 = ax.twinx()
         ax1.plot(self.__gfp, 'c', linewidth = 2)
-        ax1.plot(np.arange(self.__baseline_dur + self.__left_poi,self.__baseline_dur + self.__right_poi),self.__gfp[self.__baseline_dur + self.__left_poi:self.__baseline_dur + self.__right_poi],'r', linewidth = 2)
+        ax1.plot(np.arange(self.__left_poi,self.__right_poi),self.__gfp[self.__left_poi:self.__right_poi],'r', linewidth = 2)
         # if(self.__haspeak):
-        ax1.plot(self.__baseline_dur + self.__peak, self.__gfp[self.__baseline_dur + self.__peak], 'y*', markersize = 14)
+        ax1.plot(self.__peak, self.__gfp[self.__peak], 'y*', markersize = 14)
         # else:
         #     pseudopeak = round((self.__left_poi + self.__right_poi)/2)
         #     ax1.plot(pseudopeak, self.__gfp[pseudopeak], 'y*', markersize = 14)
         
-        ax1.plot(self.__baseline_dur + self.__onset, self.__gfp[self.__baseline_dur + self.__onset], 'go', markersize = 10)
-        ax1.plot(self.__baseline_dur + self.__offset, self.__gfp[self.__baseline_dur + self.__offset], 'go', markersize = 10)
+        ax1.plot(self.__onset, self.__gfp[self.__onset], 'go', markersize = 10)
+        ax1.plot(self.__offset, self.__gfp[self.__offset], 'go', markersize = 10)
         ax1.set_axis_off()
 
         
@@ -399,19 +401,23 @@ class Epoch:
 
     def to_AlignedEpoch(self):
         # print(self.__data.shape) # (n_trials, n_sensors, n_times)
-        template = self.__avg_data[:, self.__peak + self.__baseline_dur] 
+        template = self.__avg_data[:, self.__peak] 
         
         projected_curves = []
         for num in range(self.__num_trials): # for each trial
             single_trial = self.__data[num, :, :]
-            dur_on = int(self.__onset - (self.__peak - self.__onset) * 0.5 + self.__baseline_dur)
-            dur_off = int(self.__offset + (self.__offset - self.__peak) * 0.5 + self.__baseline_dur)
+            side = np.min(np.array([(self.__peak - self.__onset) * 0.7,  (self.__offset - self.__peak) * 0.7])).astype(int)
+            dur_on = int(self.__onset - side)
+            dur_off = int(self.__offset + side)
+            curve = []
             for i in range(dur_on, dur_off): # for each timepoint
-                projected_curves.append(np.dot(single_trial[:,i], template)/ np.linalg.norm(template))
+                curve.append(np.dot(single_trial[:,i], template)/ np.linalg.norm(template))
+            projected_curves.append(curve)
         
-        projected_curves = np.array(projected_curves).reshape(self.__num_trials, dur_off - dur_on)
+        projected_curves = np.array(projected_curves)
 
-        single_trial_peaks = np.nanargmax(projected_curves, 1) + dur_on
+        new_pk = sorted([(curve[idx], idx) for idx in argrelmax(curve, order = 10)[0]], reverse = 0)[0]
+        single_trial_peaks = new_pk + dur_on
         single_trial_onsets = (single_trial_peaks - (self.__peak - self.__onset) * 1.2).astype(int)
         single_trial_offsets = (single_trial_peaks + (self.__offset - self.__peak) * 1.2).astype(int)
 
@@ -420,5 +426,5 @@ class Epoch:
 
         # print(single_trial_peaks)
 
-        return AlignedEpoch(self.__data, single_trial_peaks, single_trial_onsets, single_trial_offsets, 
-            template, self.__times, self.__peak, all_onset, all_offset)
+        return AlignedEpoch(self.__data, self.__avg_data, single_trial_peaks, single_trial_onsets, single_trial_offsets, 
+            template, self.__times, self.__peak, all_onset, all_offset, self.__ch_names)

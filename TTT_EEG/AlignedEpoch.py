@@ -2,10 +2,12 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from .utils.Topo_plot import plotTopo
 
 class AlignedEpoch:
-    def __init__(self, data, pk_list, on_list, off_list, template, times, peak, all_onset, all_offset):
+    def __init__(self, data, avg_data, pk_list, on_list, off_list, template, times, peak, all_onset, all_offset, ch_names):
         self.__data = data
+        self.__avg_data = avg_data
         self.__pk_list = pk_list
         
         self.__on_list = on_list
@@ -17,7 +19,8 @@ class AlignedEpoch:
         self.__all_onset = all_onset
         self.__all_offset = all_offset
 
-        self.__pk_list_relative = self.__pk_list - self.__peak - self.__baseline_dur
+        self.__pk_list_relative = self.__pk_list - self.__peak
+        self.__ch_names = ch_names
 
         align = []
         for num, (on, off) in enumerate(zip(on_list, off_list)):
@@ -39,7 +42,9 @@ class AlignedEpoch:
         print(align.shape)
         
 
-        
+    def get_latency(self):
+        return self.__pk_list_relative
+
     def plot_latency_distribution(self):
         fig, ax = plt.subplots()
         plt.hist(self.__pk_list_relative)
@@ -66,4 +71,10 @@ class AlignedEpoch:
 
     def plot_aligned_topo(self,):
         #TODO: also make sure this is compatible with future all-components-at-once version
-        pass
+        print(self.__all_offset, self.__all_onset)
+        print( self.__avg_data[self.__all_onset:self.__all_offset,:].shape)
+
+        plotTopo('standard_1020', self.__ch_names, self.__avg_data[:, self.__all_onset:self.__all_offset], np.arange(0,self.__all_offset - self.__all_onset,5))
+        plotTopo('standard_1020', self.__ch_names, np.mean(self.__aligned, 0), np.arange(0,self.__all_offset - self.__all_onset,5))
+        plt.show()
+        return

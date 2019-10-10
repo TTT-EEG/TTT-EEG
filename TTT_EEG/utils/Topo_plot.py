@@ -374,7 +374,7 @@ def plotTopo(montage_kind, ch_names, data, times):
     layout = getLayout(montage_kind, ch_names)
     x,y = layout['x'].tolist(), layout['y'].tolist()
     name = layout['name']
-    z = data.T
+    z = data
     vmax = np.max(z)
     vmin = np.min(z)
     from scipy.interpolate import griddata
@@ -387,8 +387,8 @@ def plotTopo(montage_kind, ch_names, data, times):
     yi = np.linspace(-2.1,2.1,100)
     for i in range(len(times)):
         # grid the data.
-        #print('points: ' + len(x) + ' ' + len(y))
-        #print('values: ' + len(z[:,times[i]]))
+        # print('points: ' + str(len(x)) + ' ' + str(len(y)))
+        # print('values: ' + str(len(z[:,times[i]])))
 
         zi = griddata((x, y), z[:,times[i]], (xi[None,:], yi[:,None]), method='linear')
         # contour the gridded data, plotting dots at the randomly spaced data points.
@@ -403,5 +403,5 @@ def plotTopo(montage_kind, ch_names, data, times):
     plt.subplots_adjust(bottom=0.1, right=0.9, top=0.8)
     cax = plt.axes([0.92, 0.1, 0.01, 0.8])
     plt.colorbar(CS,cax=cax)
-
+    # plt.show()
     return fig, ax
